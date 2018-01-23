@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using System.Globalization;
 using System.Threading;
+using Orwell.Models;
 
 namespace Orwell.Models
 {
@@ -137,7 +138,7 @@ namespace Orwell.Models
             string dataType = string.Empty;
             foreach (var column in allColumns)
             {
-                dataType = column.DataType.ToString().ToLower().Replace("system.","").Replace("boolean", "bool");
+                dataType = GetFriendlySqlDataType(column);
 
                 stringBuilder.Append("\n         public " + dataType +" ");
                 stringBuilder.Append(column.ColumnName);
@@ -203,6 +204,7 @@ namespace Orwell.Models
 
         private void GenerateSelectViews(string ProcedureName, DataSet FieldList, bool WriteFiles, bool WriteSP)
         {
+            var viewGen = new ViewGenerator();
             string tableName = FieldList.Tables[0].TableName;
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(this.GetViewHeader(tableName));
@@ -212,6 +214,7 @@ namespace Orwell.Models
             stringBuilder.Append("   <thead>\n");
             List<DataColumn> selectableColumns = this.GetUpdatableColumns(FieldList);
 
+            // Build Table Header
             for (int index = 0; index < selectableColumns.Count; ++index)
             {
                 if (index == 0)
@@ -243,15 +246,7 @@ namespace Orwell.Models
             stringBuilder.Append("\n    </tbody>");
             stringBuilder.Append("\n</table>\n\n");
 
-            stringBuilder.Append("@section scripts {\n");
-            stringBuilder.Append("   <link href = \"//cdn.datatables.net/1.10.11/css/jquery.dataTables.min.css\" rel=\"stylesheet\">\n");
-            stringBuilder.Append("   <script src = \"//cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js\"></script>\n");
-            stringBuilder.Append("   <script>\n");
-            stringBuilder.Append("      $(document).ready(function() {\n");
-            stringBuilder.Append("         $('.DataTable').DataTable();\n");
-            stringBuilder.Append("      });\n");
-            stringBuilder.Append("   </script>\n");
-            stringBuilder.Append("}");
+            stringBuilder.Append(viewGen.AddDataTablesJS());
 
             string CommandText = stringBuilder.ToString().Replace("\n", Environment.NewLine);
 
@@ -261,25 +256,21 @@ namespace Orwell.Models
         private void GenerateUpdateViews(string ProcedureName, DataSet FieldList, bool WriteFiles, bool WriteSP)
         {
             string tableName = FieldList.Tables[0].TableName;
+            var viewGen = new ViewGenerator();
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(this.GetViewHeader(tableName));
 
             stringBuilder.Append("\n");
-            stringBuilder.Append("   @using (Html.BeginForm(\"Edit"+tableName+"\", \""+tableName+"\", FormMethod.Post, new { id = \""+tableName+"Form\" }))\n");
+            stringBuilder.Append("   @using (Html.BeginForm(\"Edit"+tableName+"\", \""+tableName+"\", FormMethod.Post, new { id = \""+tableName+"Form\", @class = \"form form-horizontal\" }))\n");
             stringBuilder.Append("   {\n");
+
+
             List<DataColumn> selectableColumns = this.GetUpdatableColumns(FieldList);
 
             for (int index = 0; index < selectableColumns.Count; ++index)
             {
                 DataColumn dataColumn = selectableColumns[index];
-
-                stringBuilder.Append("         <div class=\"form-group\">\n");
-                stringBuilder.Append("             @Html.LabelFor(model => model." + dataColumn.ColumnName+", htmlAttributes: new { @class = \"control -label col-md-3\" })\n");
-                stringBuilder.Append("             <div class=\"col-md-9\">\n");
-                stringBuilder.Append("                 @Html.EditorFor(model => model." + dataColumn.ColumnName + ", new { htmlAttributes = new { @class = \"form-control disabled\" } })\n");
-                stringBuilder.Append("                 @Html.ValidationMessageFor(model => model." + dataColumn.ColumnName + ", \"\", new { @class = \"text-danger\" })\n");
-                stringBuilder.Append("            </div>\n");
-                stringBuilder.Append("         </div>\n\n");
+                stringBuilder.Append(viewGen.CreateFormElement(dataColumn, "horizontal", "bootstrap"));
             }
 
             stringBuilder.Append("<input class=\"btn btn-success\" type=\"submit\" value=\"Update\" /> \n\n");
@@ -294,6 +285,7 @@ namespace Orwell.Models
             CreateOutput(tableName, WriteFiles, false, CommandText, "Update.cshtml");
         }
 
+        
         private void GenerateSelectOneProcedure(string ProcedureName, DataSet FieldList, bool WriteFiles, bool WriteSP)
         {
             string tableName = FieldList.Tables[0].TableName;
@@ -518,7 +510,7 @@ namespace Orwell.Models
 
         private string GetViewHeader(string TableName)
         {
-            return "@{\n   ViewBag.Title = \"" + TitleCase(TableName) + "\"; \n}";
+            return "@{\n   ViewBag.Title = \"" + TitleCase(TableName) + "\"; \n} \n\n <h1>"+TitleCase(TableName)+"</h1>\n";
         }
 
         private string GetDropProcedureCode(string ProcedureName)
@@ -584,6 +576,36 @@ namespace Orwell.Models
                     break;
                 case "system.string":
                     str = "varchar";
+                    break;
+            }
+            return str;
+        }
+
+        private string GetFriendlySqlDataType(DataColumn dc)
+        {
+            string str = "";
+            switch (dc.DataType.ToString().ToLower())
+            {
+                case "system.boolean":
+                    str = "bool";
+                    break;
+                case "system.datetime":
+                    str = "DateTime";
+                    break;
+                case "system.decimal":
+                    str = "float";
+                    break;
+                case "system.int16":
+                    str = "int";
+                    break;
+                case "system.int32":
+                    str = "int";
+                    break;
+                case "system.int64":
+                    str = "int";
+                    break;
+                case "system.string":
+                    str = "string";
                     break;
             }
             return str;
