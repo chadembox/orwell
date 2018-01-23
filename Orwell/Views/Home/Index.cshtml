@@ -1,0 +1,61 @@
+﻿@model Orwell.ViewModels.PopulateTablesViewModel
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+
+@using (Html.BeginForm("PopulateTables", "Home", FormMethod.Post, new { @class = "form-horizontal" }))
+{
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Connection Type</label>
+        <div class="col-sm-6">
+            <select id="ConxType" name="ConxType" class = "form-control">
+                <option value="Integrated">Integrated / Windows</option>
+                <option value="SQL">SQL User</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        @Html.LabelFor(model => model.ServerName, new { @class = "col-sm-2 col-form-label" })
+        <div class="col-sm-6">
+            @Html.TextBoxFor(model => model.ServerName, new { @class = "form-control" })
+        </div>
+    </div>
+
+            <div class="form-group row">
+                @Html.LabelFor(model => model.DatabaseName, new { @class = "col-sm-2 col-form-label" })
+                <div class="col-sm-6">
+                    @Html.TextBoxFor(model => model.DatabaseName, new { @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="form-group row">
+                @Html.LabelFor(model => model.Username, new { @class = "col-sm-2 col-form-label" })
+                <div class="col-sm-6">
+                    @Html.TextBoxFor(model => model.Username, new { @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="form-group row">
+                @Html.LabelFor(model => model.Password, new { @class = "col-sm-2 col-form-label" })
+                <div class="col-sm-6">
+                    @Html.TextBoxFor(model => model.Password, new { @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="form-group row">
+                @Html.LabelFor(model => model.AppName, new { @class = "col-sm-2 col-form-label" })
+                <div class="col-sm-6">
+                    @Html.TextBoxFor(model => model.AppName, new { @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-sm-6 offset-2">
+                    <input type="submit" value="Submit" class="btn btn-primary" />
+                </div>
+            </div>
+
+}

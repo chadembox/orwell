@@ -1,0 +1,186 @@
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\Microsoft.CodeAnalysis.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\System.Collections.Immutable.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\System.Diagnostics.FileVersionInfo.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\System.IO.Compression.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\System.IO.FileSystem.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\System.IO.FileSystem.Primitives.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\System.Reflection.Metadata.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\System.Security.Cryptography.Primitives.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\VBCSCompiler.exe
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\ApplicationInsights.config
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\csc.exe
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\csc.exe.config
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\csc.rsp
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\csi.exe
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\csi.exe.config
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\csi.rsp
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\Microsoft.CSharp.Core.targets
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\Microsoft.VisualBasic.Core.targets
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\Microsoft.Win32.Primitives.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\System.AppContext.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\System.Console.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\System.Diagnostics.Process.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\System.Diagnostics.StackTrace.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\System.IO.FileSystem.DriveInfo.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\System.IO.Pipes.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\System.Security.AccessControl.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\System.Security.Claims.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\System.Security.Cryptography.Algorithms.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\System.Security.Cryptography.Encoding.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\System.Security.Cryptography.X509Certificates.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\System.Security.Principal.Windows.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\System.Text.Encoding.CodePages.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\System.Threading.Thread.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\System.ValueTuple.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\System.Xml.ReaderWriter.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\System.Xml.XmlDocument.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\System.Xml.XPath.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\System.Xml.XPath.XDocument.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\vbc.exe
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\vbc.exe.config
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\vbc.rsp
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\roslyn\VBCSCompiler.exe.config
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\Antlr3.Runtime.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\Microsoft.AI.Agent.Intercept.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\Microsoft.AI.DependencyCollector.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\Microsoft.AI.PerfCounterCollector.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\Microsoft.AI.ServerTelemetryChannel.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\Microsoft.AI.Web.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\Microsoft.AI.WindowsServer.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\Microsoft.ApplicationInsights.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\Microsoft.Web.Infrastructure.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\Newtonsoft.Json.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\System.Web.Helpers.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\System.Web.Mvc.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\System.Web.Optimization.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\System.Web.Razor.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\System.Web.WebPages.Deployment.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\System.Web.WebPages.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\System.Web.WebPages.Razor.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\WebGrease.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\System.Web.Helpers.xml
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\System.Web.Mvc.xml
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\System.Web.Optimization.xml
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\System.Web.Razor.xml
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\System.Web.WebPages.xml
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\System.Web.WebPages.Deployment.xml
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\System.Web.WebPages.Razor.xml
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\Antlr3.Runtime.pdb
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\Newtonsoft.Json.xml
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\Microsoft.ApplicationInsights.xml
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\Microsoft.AI.DependencyCollector.xml
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\Microsoft.AI.ServerTelemetryChannel.xml
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\Microsoft.AI.WindowsServer.xml
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\bin\Microsoft.AI.Web.xml
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\obj\Debug\Orwell.csproj.CoreCompileInputs.cache
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\obj\Debug\Orwell.dll
+c:\users\hp z620\documents\visual studio 2017\Projects\Orwell\Orwell\obj\Debug\Orwell.pdb
+c:\Users\HP z620\Documents\Visual Studio 2017\Projects\Orwell\Orwell\bin\Orwell.dll.config
+c:\Users\HP z620\Documents\Visual Studio 2017\Projects\Orwell\Orwell\bin\Orwell.dll
+c:\Users\HP z620\Documents\Visual Studio 2017\Projects\Orwell\Orwell\bin\Orwell.pdb
+c:\Users\HP z620\Documents\Visual Studio 2017\Projects\Orwell\Orwell\bin\Microsoft.AspNet.TelemetryCorrelation.dll
+c:\Users\HP z620\Documents\Visual Studio 2017\Projects\Orwell\Orwell\bin\System.Diagnostics.DiagnosticSource.dll
+c:\Users\HP z620\Documents\Visual Studio 2017\Projects\Orwell\Orwell\bin\Microsoft.AspNet.TelemetryCorrelation.xml
+c:\Users\HP z620\Documents\Visual Studio 2017\Projects\Orwell\Orwell\bin\System.Diagnostics.DiagnosticSource.xml
+c:\Users\HP z620\Documents\Visual Studio 2017\Projects\Orwell\Orwell\obj\Debug\Orwell.csprojResolveAssemblyReference.cache
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\ApplicationInsights.config
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\Orwell.dll.config
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\Orwell.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\Orwell.pdb
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\csc.exe
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\csc.exe.config
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\csc.rsp
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\csi.exe
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\csi.exe.config
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\csi.rsp
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\Microsoft.CodeAnalysis.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\Microsoft.CSharp.Core.targets
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\Microsoft.VisualBasic.Core.targets
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\Microsoft.Win32.Primitives.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\System.AppContext.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\System.Collections.Immutable.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\System.Console.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\System.Diagnostics.FileVersionInfo.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\System.Diagnostics.Process.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\System.Diagnostics.StackTrace.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\System.IO.Compression.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\System.IO.FileSystem.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\System.IO.FileSystem.DriveInfo.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\System.IO.FileSystem.Primitives.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\System.IO.Pipes.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\System.Reflection.Metadata.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\System.Security.AccessControl.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\System.Security.Claims.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\System.Security.Cryptography.Algorithms.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\System.Security.Cryptography.Encoding.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\System.Security.Cryptography.Primitives.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\System.Security.Cryptography.X509Certificates.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\System.Security.Principal.Windows.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\System.Text.Encoding.CodePages.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\System.Threading.Thread.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\System.ValueTuple.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\System.Xml.ReaderWriter.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\System.Xml.XmlDocument.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\System.Xml.XPath.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\System.Xml.XPath.XDocument.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\vbc.exe
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\vbc.exe.config
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\vbc.rsp
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\VBCSCompiler.exe
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\roslyn\VBCSCompiler.exe.config
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\Antlr3.Runtime.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\Microsoft.AI.Agent.Intercept.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\Microsoft.AI.DependencyCollector.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\Microsoft.AI.PerfCounterCollector.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\Microsoft.AI.ServerTelemetryChannel.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\Microsoft.AI.Web.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\Microsoft.AI.WindowsServer.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\Microsoft.ApplicationInsights.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\Microsoft.AspNet.TelemetryCorrelation.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\Microsoft.Web.Infrastructure.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\Newtonsoft.Json.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\System.Diagnostics.DiagnosticSource.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\System.Web.Helpers.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\System.Web.Mvc.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\System.Web.Optimization.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\System.Web.Razor.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\System.Web.WebPages.Deployment.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\System.Web.WebPages.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\System.Web.WebPages.Razor.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\WebGrease.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\Antlr3.Runtime.pdb
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\Microsoft.AI.DependencyCollector.xml
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\Microsoft.AI.ServerTelemetryChannel.xml
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\Microsoft.AI.Web.xml
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\Microsoft.AI.WindowsServer.xml
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\Microsoft.ApplicationInsights.xml
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\Microsoft.AspNet.TelemetryCorrelation.xml
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\Newtonsoft.Json.xml
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\System.Diagnostics.DiagnosticSource.xml
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\System.Web.Helpers.xml
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\System.Web.Mvc.xml
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\System.Web.Optimization.xml
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\System.Web.Razor.xml
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\System.Web.WebPages.xml
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\System.Web.WebPages.Deployment.xml
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\bin\System.Web.WebPages.Razor.xml
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\obj\Debug\Orwell.dll
+C:\Users\ceheste1\Desktop\Personal 2017\Orwell\Orwell\Orwell\obj\Debug\Orwell.pdb
