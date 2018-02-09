@@ -37,3 +37,9 @@ body > .container {
 code {
     font-size: 80%;
 }
+
+
+
+.tab-pane {
+    padding: 20px 10px;
+}

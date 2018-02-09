@@ -12,12 +12,16 @@ namespace Orwell.Controllers
     {
 
         MultiSelectList tableList { get; set; }
-
-
+        
         public ActionResult Index()
         {
             var vm = new PopulateTablesViewModel();
-
+            vm.Tables = null;
+            List<SelectListItem> items = new List<SelectListItem>();
+            var item = new SelectListItem() { Text = "None", Value = "None" };
+            items.Add(item);
+            vm.Tables = new MultiSelectList(items.OrderBy(i => i.Text), "Value", "Text");
+            vm.TableIds = new List<string>();
             return View(vm);
         }
 
@@ -31,7 +35,7 @@ namespace Orwell.Controllers
             try
             {
                 foreach (string str2 in DataAccessSql.GetTableNamesFromDatabase())
-                {
+                {   
                     if (!str2.StartsWith("sys"))
                     {
 
@@ -51,7 +55,7 @@ namespace Orwell.Controllers
             tableList = new MultiSelectList(items.OrderBy(i => i.Text), "Value", "Text");
             vm.Tables = tableList;
 
-            return View("Tables", vm);
+            return PartialView("_selectTables", vm);
         }
 
         private static string GetConnectionString(PopulateTablesViewModel vm)
@@ -72,7 +76,6 @@ namespace Orwell.Controllers
         [HttpPost]
         public ActionResult Generate(PopulateTablesViewModel vm)
         {
-
             try
             {
                 var conxString = GetConnectionString(vm);
@@ -81,7 +84,7 @@ namespace Orwell.Controllers
                 bool writeSP = false;
                 switch (vm.ScaffoldType)
                 {
-                    case "Both":
+                    case "Both":    
                         writeFiles = true;
                         writeSP = true;
                         break;
@@ -96,7 +99,7 @@ namespace Orwell.Controllers
 
 
                 List<DatabaseTable> databaseTableList = new List<DatabaseTable>();
-                foreach (object checkedItem in vm.TableIds)
+                foreach (object checkedItem in vm.Tables)
                     databaseTableList.Add(new DatabaseTable()
                     {
                         TableName = checkedItem.ToString(),

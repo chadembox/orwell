@@ -1,0 +1,11 @@
+﻿@model Orwell.ViewModels.PopulateTablesViewModel
+
+<div class="form-group row">
+    @Html.LabelFor(i => i.Tables, new { @class = "control-label col-md-2" })
+    <div class="col-md-6">
+        @Html.ListBoxFor(i => Model.Tables, Model.Tables,
+                new { @class = "form-control", @style = "height: 300px" })
+        @Html.ValidationMessageFor(i => i.Tables,
+                "", new { @class = "text-warning" })
+    </div>
+</div>
