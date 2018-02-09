@@ -106,7 +106,8 @@ namespace Orwell.Models
             string header = GetModelHeader("Apollo");
             stringBuilder.Append(header);
 
-            stringBuilder.Append("\n      public class "+ ObjectName +" : ApolloModel<"+tkey+">");
+            stringBuilder.Append("\n");
+            stringBuilder.Append("   public class "+ ObjectName +" : ApolloModel<"+tkey+">");
             stringBuilder.Append("   { \n");
 
             foreach (var item in commandList)
@@ -114,22 +115,21 @@ namespace Orwell.Models
                 stringBuilder.Append("public const string "+item.Title+" = \"" + item.Value +" \";\n");
             }
 
-            stringBuilder.Append("\n      public ");
-            stringBuilder.Append(ObjectName + "() : base(FillCommand, InsertCommand, UpdateCommand, DeleteCommand)\n");
+            stringBuilder.Append("\n");
+            stringBuilder.Append("     public "+ ObjectName + "() : base(FillCommand, InsertCommand, UpdateCommand, DeleteCommand)\n");
             stringBuilder.Append("      { \n");
             stringBuilder.Append("           Init(); \n");
             stringBuilder.Append("      }\n");
 
-            stringBuilder.Append("\n      public ");
-            stringBuilder.Append(ObjectName + "("+ tkey +" id) : base(FillCommand, InsertCommand, UpdateCommand, DeleteCommand)\n");
+            stringBuilder.Append("\n");
+            stringBuilder.Append("     public " + ObjectName + "("+ tkey +" id) : base(FillCommand, InsertCommand, UpdateCommand, DeleteCommand)\n");
             stringBuilder.Append("      { \n");
             stringBuilder.Append("           Init(); \n");
             stringBuilder.Append("           Fill(id); \n");
             stringBuilder.Append("      }\n");
 
-
-            stringBuilder.Append("\n      public ");
-            stringBuilder.Append("static "+ ObjectName +"Collection GetAll()\n");
+            stringBuilder.Append("\n");
+            stringBuilder.Append("     public static "+ ObjectName +"Collection GetAll()\n");
             stringBuilder.Append("      {\n");
             stringBuilder.Append("          return GetCollection<" + ObjectName +"Collection, "+ObjectName+">(GetAllCommand);\n");
             stringBuilder.Append("      }\n");
@@ -140,17 +140,17 @@ namespace Orwell.Models
             {
                 dataType = GetFriendlySqlDataType(column);
 
-                stringBuilder.Append("\n         public " + dataType +" ");
-                stringBuilder.Append(column.ColumnName);
-                stringBuilder.Append("\n         { \n");
+                stringBuilder.Append("\n");
+                stringBuilder.Append("         public " + dataType +" "+ column.ColumnName);
+                stringBuilder.Append("\n");
+                stringBuilder.Append("         { \n");
 
                 stringBuilder.Append("             get { return Get<" + dataType + ">(\"" + column.ColumnName + "\"); }\n");
                 stringBuilder.Append("             set { Set(\"" + column.ColumnName+"\", value); }\n");
-
-                stringBuilder.Append("\n         } \n");
+                stringBuilder.Append("\n");
+                stringBuilder.Append("         } \n");
 
             }
-
 
             // Footer
             stringBuilder.Append("     }\n");

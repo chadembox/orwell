@@ -3,26 +3,57 @@
 @{
     ViewBag.Title = "Home Page";
 }
-
-
-@using (Html.BeginForm("PopulateTables", "Home", FormMethod.Post, new { @class = "form-horizontal" }))
+<h1>Orwell</h1>
+<p>Application code generator to speed up the process of writing the same old same old CRUD code.</p>
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#app-details" role="tab" aria-controls="app-details" aria-selected="true">Application Details</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="database-tab" data-toggle="tab" href="#database" role="tab" aria-controls="profile" aria-selected="false">Database Connectivity</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="tables-tab" data-toggle="tab" href="#tables" role="tab" aria-controls="profile" aria-selected="false">Select Tables</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="output-tab" data-toggle="tab" href="#output" role="tab" aria-controls="output" aria-selected="false">Output Type</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="generate-tab" data-toggle="tab" href="#generate" role="tab" aria-controls="generate" aria-selected="false">Generate Code</a>
+    </li>
+</ul>
+@using (Html.BeginForm("Generate", "Home", FormMethod.Post, new { @class = "form-horizontal" }))
 {
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Connection Type</label>
-        <div class="col-sm-6">
-            <select id="ConxType" name="ConxType" class = "form-control">
-                <option value="Integrated">Integrated / Windows</option>
-                <option value="SQL">SQL User</option>
-            </select>
-        </div>
-    </div>
+    <div class="tab-content">
+        <div class="tab-pane active" id="app-details" role="tabpanel" aria-labelledby="home-tab">
+            <h3>Application Details</h3>
 
-    <div class="form-group row">
-        @Html.LabelFor(model => model.ServerName, new { @class = "col-sm-2 col-form-label" })
-        <div class="col-sm-6">
-            @Html.TextBoxFor(model => model.ServerName, new { @class = "form-control" })
+            <div class="form-group row">
+                @Html.LabelFor(model => model.AppName, new { @class = "col-sm-2 col-form-label" })
+                <div class="col-sm-6">
+                    @Html.TextBoxFor(model => model.AppName, new { @class = "form-control" })
+                </div>
+            </div>
+
         </div>
-    </div>
+        <div class="tab-pane" id="database" role="tabpanel" aria-labelledby="database-tab">
+            <h3>Database Connectivity</h3>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Connection Type</label>
+                <div class="col-sm-6">
+                    <select id="ConxType" name="ConxType" class="form-control">
+                        <option value="Integrated">Integrated / Windows</option>
+                        <option value="SQL">SQL User</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                @Html.LabelFor(model => model.ServerName, new { @class = "col-sm-2 col-form-label" })
+                <div class="col-sm-6">
+                    @Html.TextBoxFor(model => model.ServerName, new { @class = "form-control" })
+                </div>
+            </div>
 
             <div class="form-group row">
                 @Html.LabelFor(model => model.DatabaseName, new { @class = "col-sm-2 col-form-label" })
@@ -44,18 +75,99 @@
                     @Html.TextBoxFor(model => model.Password, new { @class = "form-control" })
                 </div>
             </div>
-
+        </div>
+        <div class="tab-pane" id="tables" role="tabpanel" aria-labelledby="tables-tab">
+            <h3>Select Tables</h3>
+            <button class="btn btn-default" id="GetTables" type="button">Load Table List</button>
+            <div id="partialView">
+                @Html.Partial("_selectTables", Model)
+            </div>
+        </div>
+        <div class="tab-pane" id="output" role="tabpanel" aria-labelledby="output-tab">
+            <h3>Output</h3>
             <div class="form-group row">
-                @Html.LabelFor(model => model.AppName, new { @class = "col-sm-2 col-form-label" })
+                <label class="col-sm-2 col-form-label">Output Type</label>
                 <div class="col-sm-6">
-                    @Html.TextBoxFor(model => model.AppName, new { @class = "form-control" })
+                    <select id="ScaffoldType" name="ScaffoldType" class="form-control" required>
+                        <option value="">Select One</option>
+                        <option value="SP Only">Stored Procedures Only</option>
+                        <option value="Files Only">Files Only</option>
+                        <option value="Both">Both</option>
+                    </select>
+
                 </div>
             </div>
+
+        </div>
+        <div class="tab-pane" id="generate" role="tabpanel" aria-labelledby="generate-tab">
+            <h3>Generate Code</h3>
 
             <div class="form-group row">
-                <div class="col-sm-6 offset-2">
-                    <input type="submit" value="Submit" class="btn btn-primary" />
+                <div class="col-sm-6">
+                    <button type="button" id="GenerateCode" name="GenerateCode" class="btn btn-primary">Generate Code</button>
                 </div>
             </div>
+        </div>
+    </div>
+}
 
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $("#GetTables").click(function () {
+                var url = "@Url.Action("PopulateTables","Home")";
+                var model = {
+                    AppName: $("#AppName").val(),
+                    ConxType : $("#ConxType").val(),
+                    ServerName : $("#ServerName").val(),
+                    DatabaseName : $("#DatabaseName").val(),
+                    Username : $("#Username").val(),
+                    Password : $("#Password").val()
+                }
+                var request = $.ajax({
+                    type: 'POST',
+                    url: url,
+                    processData: false,
+                    contentType: "application/json",
+                    data: JSON.stringify(model)
+                });
+                request.done(function (partialViewResult) {
+                    $("#partialView").html(partialViewResult);
+                });
+                request.fail(function () {
+                    alert('error');
+                });
+            });
+
+            $("#GenerateCode").click(function () {
+
+                var url = "@Url.Action("Generate","Home")";
+                var model = {
+                    AppName : $("#AppName").val(),
+                    ConxType : $("#ConxType").val(),
+                    ServerName : $("#ServerName").val(),
+                    DatabaseName : $("#DatabaseName").val(),
+                    Username : $("#Username").val(),
+                    Password : $("#Password").val(),
+                    ScaffoldType : $("#ScaffoldType").val(),
+                    Tables : $.map($("#Tables option:selected"), function (e) { return $(e).val(); })
+                }
+                var request = $.ajax({
+                    type: 'POST',
+                    url: url,
+                    processData: false,
+                    contentType: "application/json",
+                    data: JSON.stringify(model)
+                });
+                request.done(function (partialViewResult) {
+                    alert('success');
+                });
+                request.fail(function () {
+                    alert('error');
+                });
+            });
+        });
+
+        
+    </script>
 }

@@ -34,5 +34,11 @@ namespace Orwell.ViewModels
 
         [Display(Name = "Tables")]
         public MultiSelectList Tables { get; set; }
+     
+        public PopulateTablesViewModel()
+        {
+            Tables = null;
+            TableIds = new List<string>();
+        }
     }
 }
