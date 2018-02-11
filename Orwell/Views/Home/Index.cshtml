@@ -104,7 +104,7 @@
 
             <div class="form-group row">
                 <div class="col-sm-6">
-                    <button type="button" id="GenerateCode" name="GenerateCode" class="btn btn-primary">Generate Code</button>
+                    <button type="submit" id="GenerateCode" name="GenerateCode" class="btn btn-primary">Generate Code</button>
                 </div>
             </div>
         </div>
@@ -139,7 +139,7 @@
                 });
             });
 
-            $("#GenerateCode").click(function () {
+            @*$("#GenerateCode").click(function () {
 
                 var url = "@Url.Action("Generate","Home")";
                 var model = {
@@ -165,7 +165,7 @@
                 request.fail(function () {
                     alert('error');
                 });
-            });
+            });*@
         });
 
         

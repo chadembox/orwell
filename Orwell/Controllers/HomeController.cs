@@ -74,8 +74,19 @@ namespace Orwell.Controllers
         }
 
         [HttpPost]
-        public ActionResult Generate(PopulateTablesViewModel vm)
+        public ActionResult Generate(FormCollection form)
         {
+            var vm = new PopulateTablesViewModel();
+            vm.AppName = form["AppName"];
+            vm.ConxType = form["ConxType"];
+            vm.DatabaseName = form["DatabaseName"];
+            vm.ScaffoldType = form["ScaffoldType"];
+            vm.ServerName = form["ServerName"];
+            vm.Username = form["Username"];
+            vm.Password = form["Password"];
+            var tables = form["Tables"];
+            
+            var formatedList = tables.Split(',');
             try
             {
                 var conxString = GetConnectionString(vm);
@@ -97,9 +108,9 @@ namespace Orwell.Controllers
 
                 }
 
-
                 List<DatabaseTable> databaseTableList = new List<DatabaseTable>();
-                foreach (object checkedItem in vm.Tables)
+                foreach (string checkedItem in formatedList)
+                {
                     databaseTableList.Add(new DatabaseTable()
                     {
                         TableName = checkedItem.ToString(),
@@ -114,9 +125,10 @@ namespace Orwell.Controllers
                         WriteProcedures = writeSP
                     });
 
-                var genUp = new SpGenerator();
+                    var genUp = new SpGenerator();
 
-                genUp.GenerateStoreProcedures(conxString, databaseTableList);
+                    genUp.GenerateStoreProcedures(conxString, databaseTableList);
+                }
 
             }
             catch (Exception ex)
