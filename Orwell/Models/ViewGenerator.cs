@@ -29,11 +29,7 @@ namespace Orwell.Models
 
         public string CreateFormElement(DataColumn dataColumn, string layout = "horizontal", string style = "bootstrap")
         {
-
-
             StringBuilder stringBuilder = new StringBuilder();
-
-
             switch (style)
             {
                 case "bootstrap":
@@ -41,9 +37,9 @@ namespace Orwell.Models
                     if (layout == "horizontal")
                     {
                         stringBuilder.Append("         <div class=\"form-group\">\n");
-                        stringBuilder.Append("             @Html.LabelFor(model => model." + dataColumn.ColumnName + ", htmlAttributes: new { @class = \"control -label col-md-3\" })\n");
+                        stringBuilder.Append("             @Html.LabelFor(model => model." + dataColumn.ColumnName + ", htmlAttributes: new { @class = \"control-label col-md-3\" })\n");
                         stringBuilder.Append("             <div class=\"col-md-9\">\n");
-                        stringBuilder.Append("                 @Html.EditorFor(model => model." + dataColumn.ColumnName + ", new { htmlAttributes = new { @class = \"form-control disabled\" } })\n");
+                        stringBuilder.Append("                 @Html.EditorFor(model => model." + dataColumn.ColumnName + ", new { htmlAttributes = new { @class = \"form-control\" } })\n");
                         stringBuilder.Append("                 @Html.ValidationMessageFor(model => model." + dataColumn.ColumnName + ", \"\", new { @class = \"text-danger\" })\n");
                         stringBuilder.Append("            </div>\n");
                         stringBuilder.Append("         </div>\n\n");

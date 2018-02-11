@@ -5,7 +5,6 @@ using System.Text;
 using System.IO;
 using System.Globalization;
 using System.Threading;
-using Orwell.Models;
 
 namespace Orwell.Models
 {
@@ -14,14 +13,16 @@ namespace Orwell.Models
     {
         public string ProcedurePrefix = String.Empty;
 
+        public string timestamp { get; set; }
+
+        public string AppName { get; set; }
+
         public bool OverwriteExistingSps { get; internal set; }
 
         public bool IsValidConnectionString(string strConnectionString)
         {
             return true;
         }
-
-        public event SpGenerator.ProcedureCreatedEventHandler ProcedureCreated;
 
         private void DropProcedure(string Name)
         {
@@ -44,55 +45,67 @@ namespace Orwell.Models
 
         public void GenerateStoreProcedures(string ConnectionString, DatabaseTable Table, bool CreateInsert, bool CreateSelect, bool CreateUpdate, bool CreateDelete, bool CreateSelectDetails, bool WriteFiles, bool WriteSP)
         {
-            var cleanTableName = Table.PluralName.Replace(" ", "").Replace("_", "");
-            var commandPrefix = Table.SchemaName + "." + this.ProcedurePrefix + cleanTableName;
+            var cleanTableName = string.Empty;
+            var commandPrefix = string.Empty;
             var commandList = new List<CommandObj>();
             string tempName = String.Empty;
             try
             {
                 DataAccessSql.ConnectionString = ConnectionString;
                 DataSet tableSchema = DataAccessSql.GetTableSchema(Table.TableName);
+                cleanTableName = tableSchema.Tables[0].TableName.Replace("_", "").Replace("-", "");
+                commandPrefix = Table.SchemaName + "." + cleanTableName;
                 if (CreateSelect)
                 {
-                    tempName = commandPrefix + "SelectAll";
-                    this.GenerateSelectProcedure(tempName, tableSchema, WriteFiles, WriteSP);
+                    tempName = cleanTableName + "SelectAll";
+                    this.GenerateSelectProcedure(tempName, tableSchema, WriteFiles, WriteSP, Table.SchemaName);
                     commandList.Add(new CommandObj() { Title = "GetAllCommand", Value = tempName });
                 }
                 if (CreateSelectDetails)
                 {
-                    tempName = commandPrefix + "Select";
-                    this.GenerateSelectOneProcedure(tempName, tableSchema, WriteFiles, WriteSP);
+                    tempName = cleanTableName + "Select";
+                    this.GenerateSelectOneProcedure(tempName, tableSchema, WriteFiles, WriteSP, Table.SchemaName);
                     commandList.Add(new CommandObj() { Title = "FillCommand", Value = tempName });
 
-
                     // Index Creation script
-                    tempName = commandPrefix + "SelectAll";
-                    this.GenerateSelectViews(tempName, tableSchema, WriteFiles, WriteSP);
+                    tempName = cleanTableName + "SelectAll";
+                    this.GenerateSelectViews(tempName, tableSchema, WriteFiles, WriteSP, Table.SchemaName);
+
+                    // Collection model script
+                    this.GenerateCollectionModel(cleanTableName);
+                    
                 }
                 if (CreateDelete)
                 {
-                    tempName = commandPrefix + "Delete";
-                    this.GenerateDeleteProcedure(tempName, tableSchema, WriteFiles, WriteSP);
+                    tempName = cleanTableName + "Delete";
+                    this.GenerateDeleteProcedure(tempName, tableSchema, WriteFiles, WriteSP, Table.SchemaName);
                     commandList.Add(new CommandObj() { Title = "DeleteCommand", Value = tempName });
                 }
                 if (CreateUpdate)
                 {
-                    tempName = commandPrefix + "Update";
-                    this.GenerateUpdateProcedure(tempName, tableSchema, WriteFiles, WriteSP);
+                    tempName = cleanTableName + "Update";
+                    this.GenerateUpdateProcedure(tempName, tableSchema, WriteFiles, WriteSP, Table.SchemaName);
                     commandList.Add(new CommandObj() { Title = "UpdateCommand", Value = tempName });
 
-                    this.GenerateUpdateViews(tempName, tableSchema, true, false);
+                    this.GenerateUpdateViews(tempName, tableSchema, true, false, Table.SchemaName);
                 }
-
                 if (!CreateInsert)
                     return;
-                tempName = commandPrefix + "Insert";
-                this.GenerateInsertProcedure(tempName, tableSchema, WriteFiles, WriteSP);
-                commandList.Add(new CommandObj() { Title = "InsertCommand", Value = tempName });
 
+                tempName = cleanTableName + "Insert";
+                this.GenerateInsertProcedure(tempName, tableSchema, WriteFiles, WriteSP, Table.SchemaName);
+                commandList.Add(new CommandObj() { Title = "InsertCommand", Value = tempName });
+                // Index Creation script
+                this.GenerateInsertViews(tempName, tableSchema, WriteFiles, WriteSP, Table.SchemaName);
+
+                // Generate App User
+                GenerateAppUser();
+
+                // Generate DB Context
+                GenerateDBContext();
 
                 // Model Creation script
-                GenerateModel(cleanTableName, commandList, tableSchema, "int");
+                GenerateModel(cleanTableName, commandList, tableSchema, "int", Table.SchemaName);
             }
             catch (Exception ex)
             {
@@ -100,38 +113,111 @@ namespace Orwell.Models
             }
         }
 
-        private void GenerateModel(string ObjectName, List<CommandObj> commandList, DataSet tableSchema, string tkey)
+        #region Models
+        private void GenerateAppUser()
         {
             StringBuilder stringBuilder = new StringBuilder();
-            string header = GetModelHeader("Apollo");
+            stringBuilder.Append("using Karpster.Core.Data.EntityFramework;\n");
+            stringBuilder.Append("using Microsoft.AspNet.Identity;\n");
+            stringBuilder.Append("using System.Security.Claims;\n");
+            stringBuilder.Append("using System.Threading.Tasks;\n");
+            stringBuilder.Append("\n\n");
+            stringBuilder.Append("   namespace " + AppName + ".Core.Models\n");
+            stringBuilder.Append("   {\n");
+            stringBuilder.Append("      public class " + AppName + "User : Karpster.Core.Identity.ApplicationUser, IEntity<string>\n");
+            stringBuilder.Append("      {\n");
+            stringBuilder.Append("         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<"+AppName+"User, string> manager)\n");
+            stringBuilder.Append("         {\n");
+            stringBuilder.Append("             ClaimsIdentity userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);\n\n");
+            stringBuilder.Append("             return userIdentity;\n");
+            stringBuilder.Append("         }\n");
+            stringBuilder.Append("\n\n");
+            stringBuilder.Append("         public bool Disabled { get; set; }\n\n");
+            stringBuilder.Append("         public bool Approved { get; set; }\n\n");
+            stringBuilder.Append("         public UserAccountType AccountType { get; set; }\n\n");
+            stringBuilder.Append("   }\n");
+            stringBuilder.Append("}");
+            CreateOutput(AppName + "User", true, false, stringBuilder.ToString(), "data", AppName + "User.cs");
+
+        }
+
+        private void GenerateDBContext()
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append("using " + AppName + ".Core.Models;\n");
+            stringBuilder.Append("using Karpster.Core.Identity;\n");
+            stringBuilder.Append("using System.Data.Entity;\n");
+            stringBuilder.Append("\n\n");
+            stringBuilder.Append("   namespace "+AppName+".Core.Data\n");
+            stringBuilder.Append("   {\n");
+            stringBuilder.Append("      public class " + AppName + "DbContext : ApplicationDbContext<" + AppName + "User>\n");
+            stringBuilder.Append("      {\n");
+            stringBuilder.Append("         public static " + AppName + "DbContext Create()\n");
+            stringBuilder.Append("         {\n");
+            stringBuilder.Append("             return new " + AppName + "DbContext();\n");
+            stringBuilder.Append("         }\n");
+            stringBuilder.Append("\n\n");
+            stringBuilder.Append("         public DbSet<LogEntry> Logs { get; set; }\n\n");
+            stringBuilder.Append("         protected override void OnModelCreating(DbModelBuilder modelBuilder)\n");
+            stringBuilder.Append("         {\n");
+            stringBuilder.Append("            base.OnModelCreating(modelBuilder);\n");
+            stringBuilder.Append("         }\n");
+            stringBuilder.Append("      }\n");
+            stringBuilder.Append("   }\n");
+            stringBuilder.Append("}");
+            CreateOutput(AppName + "DbContext", true, false, stringBuilder.ToString(), "data", AppName + "DbContext.cs");
+        }
+
+        private void GenerateCollectionModel(string objectName)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append("using Karpster.Core.Data.ObjectModel;\n");
+            stringBuilder.Append("using Microsoft.AspNet.Identity;\n");
+            stringBuilder.Append("using System.Security.Claims;\n");
+            stringBuilder.Append("using System.Threading.Tasks;\n");
+            stringBuilder.Append("\n\n");
+            stringBuilder.Append("   namespace " + AppName + ".Core.Models\n");
+            stringBuilder.Append("   {\n");
+            stringBuilder.Append("      public class " + objectName + "Collection : DataModelCollection<" + objectName+", int>\n");
+            stringBuilder.Append("      {\n");
+            stringBuilder.Append("      }\n");
+            stringBuilder.Append("}");
+            CreateOutput(objectName + "Collection", true, false, stringBuilder.ToString(), "model", objectName + "Collection.cs");
+
+        }  
+
+        private void GenerateModel(string ObjectName, List<CommandObj> commandList, DataSet tableSchema, string tkey, string schemaName)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            string header = GetModelHeader();
             stringBuilder.Append(header);
 
             stringBuilder.Append("\n");
-            stringBuilder.Append("   public class "+ ObjectName +" : ApolloModel<"+tkey+">");
+            stringBuilder.Append("   public class " + ObjectName + " : " + AppName + "Model<" + tkey + ">");
             stringBuilder.Append("   { \n");
 
             foreach (var item in commandList)
             {
-                stringBuilder.Append("public const string "+item.Title+" = \"" + item.Value +" \";\n");
+                stringBuilder.Append("public const string " + item.Title + " = \"" + item.Value + " \";\n");
             }
 
             stringBuilder.Append("\n");
-            stringBuilder.Append("     public "+ ObjectName + "() : base(FillCommand, InsertCommand, UpdateCommand, DeleteCommand)\n");
+            stringBuilder.Append("     public " + ObjectName + "() : base(FillCommand, InsertCommand, UpdateCommand, DeleteCommand)\n");
             stringBuilder.Append("      { \n");
             stringBuilder.Append("           Init(); \n");
             stringBuilder.Append("      }\n");
 
             stringBuilder.Append("\n");
-            stringBuilder.Append("     public " + ObjectName + "("+ tkey +" id) : base(FillCommand, InsertCommand, UpdateCommand, DeleteCommand)\n");
+            stringBuilder.Append("     public " + ObjectName + "(" + tkey + " id) : base(FillCommand, InsertCommand, UpdateCommand, DeleteCommand)\n");
             stringBuilder.Append("      { \n");
             stringBuilder.Append("           Init(); \n");
             stringBuilder.Append("           Fill(id); \n");
             stringBuilder.Append("      }\n");
 
             stringBuilder.Append("\n");
-            stringBuilder.Append("     public static "+ ObjectName +"Collection GetAll()\n");
+            stringBuilder.Append("     public static " + ObjectName + "Collection GetAll()\n");
             stringBuilder.Append("      {\n");
-            stringBuilder.Append("          return GetCollection<" + ObjectName +"Collection, "+ObjectName+">(GetAllCommand);\n");
+            stringBuilder.Append("          return GetCollection<" + ObjectName + "Collection, " + ObjectName + ">(GetAllCommand);\n");
             stringBuilder.Append("      }\n");
 
             List<DataColumn> allColumns = this.GetAllColumns(tableSchema);
@@ -141,12 +227,12 @@ namespace Orwell.Models
                 dataType = GetFriendlySqlDataType(column);
 
                 stringBuilder.Append("\n");
-                stringBuilder.Append("         public " + dataType +" "+ column.ColumnName);
+                stringBuilder.Append("         public " + dataType + " " + column.ColumnName);
                 stringBuilder.Append("\n");
                 stringBuilder.Append("         { \n");
 
                 stringBuilder.Append("             get { return Get<" + dataType + ">(\"" + column.ColumnName + "\"); }\n");
-                stringBuilder.Append("             set { Set(\"" + column.ColumnName+"\", value); }\n");
+                stringBuilder.Append("             set { Set(\"" + column.ColumnName + "\", value); }\n");
                 stringBuilder.Append("\n");
                 stringBuilder.Append("         } \n");
 
@@ -156,28 +242,36 @@ namespace Orwell.Models
             stringBuilder.Append("     }\n");
             stringBuilder.Append("}\n");
 
-            CreateOutput(ObjectName, true, false, stringBuilder.ToString(), ObjectName+ ".cs");
+            CreateOutput(ObjectName, true, false, stringBuilder.ToString(), "model", ObjectName + ".cs");
         }
 
-        private string GetModelHeader(string projectName)
+        private string GetModelHeader()
         {
             StringBuilder stringBuilder = new StringBuilder();
 
-            stringBuilder.Append("using System;\n");
-            stringBuilder.Append("using System.Collections.Generic;\n");
-            stringBuilder.Append("using System.ComponentModel.DataAnnotations;\n");
-            stringBuilder.Append("using System.Linq;\n\n");
+            stringBuilder.Append("//using System;\n");
+            stringBuilder.Append("//using System.Collections.Generic;\n");
+            stringBuilder.Append("//using System.ComponentModel.DataAnnotations;\n");
+            stringBuilder.Append("//using System.Linq;\n\n");
+            stringBuilder.Append("using Karpster.Core.Data.ObjectModel;\n");
 
-            stringBuilder.Append("namespace "+ projectName + ".Core.Models \n{ \n");
+            stringBuilder.Append("namespace " + AppName + ".Core.Models \n{ \n");
 
             return stringBuilder.ToString();
         }
+        #endregion
 
-        private void GenerateSelectProcedure(string ProcedureName, DataSet FieldList, bool WriteFiles, bool WriteSP)
+        #region Stored Procedures
+        private string GetProcedureHeader(string ProcedureName, string schemaName)
+        {
+            return "CREATE PROCEDURE  [" + schemaName + "].[" + ProcedureName + "]";
+        }
+
+        private void GenerateSelectProcedure(string ProcedureName, DataSet FieldList, bool WriteFiles, bool WriteSP, string schemaName)
         {
             string tableName = FieldList.Tables[0].TableName;
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append(this.GetProcedureHeader(ProcedureName));
+            stringBuilder.Append(this.GetProcedureHeader(ProcedureName, schemaName));
 
             stringBuilder.Append("\nAS\n");
             stringBuilder.Append("\n");
@@ -194,7 +288,7 @@ namespace Orwell.Models
                 stringBuilder.Append("\n");
             }
 
-            stringBuilder.Append("FROM [" + tableName + "]");
+            stringBuilder.Append("FROM [" + schemaName + "].[" + tableName + "]");
             stringBuilder.Append("\n");
             stringBuilder.Append("\n/*" + this.GetDropProcedureCode(ProcedureName) + "*/");
             string CommandText = stringBuilder.ToString().Replace("\n", Environment.NewLine);
@@ -202,95 +296,11 @@ namespace Orwell.Models
             CreateOutput(ProcedureName, WriteFiles, WriteSP, CommandText);
         }
 
-        private void GenerateSelectViews(string ProcedureName, DataSet FieldList, bool WriteFiles, bool WriteSP)
-        {
-            var viewGen = new ViewGenerator();
-            string tableName = FieldList.Tables[0].TableName;
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append(this.GetViewHeader(tableName));
-
-            stringBuilder.Append("\n");
-            stringBuilder.Append("<table class=\"table DataTable\">\n");
-            stringBuilder.Append("   <thead>\n");
-            List<DataColumn> selectableColumns = this.GetUpdatableColumns(FieldList);
-
-            // Build Table Header
-            for (int index = 0; index < selectableColumns.Count; ++index)
-            {
-                if (index == 0)
-                {
-                    stringBuilder.Append("     <tr>");
-                    stringBuilder.Append("\n      <th>");
-                }
-                DataColumn dataColumn = selectableColumns[index];
-                stringBuilder.Append(dataColumn.ColumnName);
-                if (index < selectableColumns.Count - 1)
-                    stringBuilder.Append("</th>\n      <th>");
-            }
-            stringBuilder.Append("</th>\n      <th>Functions</th>");
-            stringBuilder.Append("\n     </tr>\n   </thead>\n   <tbody>");
-            stringBuilder.Append("\n");
-            stringBuilder.Append("@{\n     foreach(var item in items){");
-            stringBuilder.Append("\n          <tr>\n");
-
-            for (int index = 0; index < selectableColumns.Count; ++index)
-            {
-                DataColumn dataColumn = selectableColumns[index];
-                stringBuilder.Append("             <td>@item." + dataColumn.ColumnName + "</td>");
-                stringBuilder.Append("\n");
-            }
-            stringBuilder.Append("             <td><a href=\"#\" class=\"btn btn-xs btn-default\">Edit</a></td>");
-
-            stringBuilder.Append("\n");
-            stringBuilder.Append("          </tr>\n       } \n}");
-            stringBuilder.Append("\n    </tbody>");
-            stringBuilder.Append("\n</table>\n\n");
-
-            stringBuilder.Append(viewGen.AddDataTablesJS());
-
-            string CommandText = stringBuilder.ToString().Replace("\n", Environment.NewLine);
-
-            CreateOutput(tableName, WriteFiles, false, CommandText, "Index.cshtml");
-        }
-        
-        private void GenerateUpdateViews(string ProcedureName, DataSet FieldList, bool WriteFiles, bool WriteSP)
-        {
-            string tableName = FieldList.Tables[0].TableName;
-            var viewGen = new ViewGenerator();
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append(this.GetViewHeader(tableName));
-
-            stringBuilder.Append("\n");
-            stringBuilder.Append("   @using (Html.BeginForm(\"Edit"+tableName+"\", \""+tableName+"\", FormMethod.Post, new { id = \""+tableName+"Form\", @class = \"form form-horizontal\" }))\n");
-            stringBuilder.Append("   {\n");
-
-
-            List<DataColumn> selectableColumns = this.GetUpdatableColumns(FieldList);
-
-            for (int index = 0; index < selectableColumns.Count; ++index)
-            {
-                DataColumn dataColumn = selectableColumns[index];
-                stringBuilder.Append(viewGen.CreateFormElement(dataColumn, "horizontal", "bootstrap"));
-            }
-
-            stringBuilder.Append("<input class=\"btn btn-success\" type=\"submit\" value=\"Update\" /> \n\n");
-            stringBuilder.Append("    }\n");
-
-            stringBuilder.Append("@section scripts {\n");
-            
-            stringBuilder.Append("}");
-
-            string CommandText = stringBuilder.ToString().Replace("\n", Environment.NewLine);
-
-            CreateOutput(tableName, WriteFiles, false, CommandText, "Update.cshtml");
-        }
-
-        
-        private void GenerateSelectOneProcedure(string ProcedureName, DataSet FieldList, bool WriteFiles, bool WriteSP)
+        private void GenerateSelectOneProcedure(string ProcedureName, DataSet FieldList, bool WriteFiles, bool WriteSP, string schemaName)
         {
             string tableName = FieldList.Tables[0].TableName;
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append(this.GetProcedureHeader(ProcedureName));
+            stringBuilder.Append(this.GetProcedureHeader(ProcedureName, schemaName));
             stringBuilder.Append("\n");
             List<DataColumn> primaryKeys = this.GetPrimaryKeys(FieldList);
             if (primaryKeys.Count == 0)
@@ -314,7 +324,7 @@ namespace Orwell.Models
                 stringBuilder.Append("\n");
             }
 
-            stringBuilder.Append("FROM [" + tableName + "]");
+            stringBuilder.Append("FROM [" + schemaName + "].[" + tableName + "]");
 
             stringBuilder.Append(this.GetSelectWHEREClause(primaryKeys));
             stringBuilder.Append("\n/*" + this.GetDropProcedureCode(ProcedureName) + "*/");
@@ -323,11 +333,11 @@ namespace Orwell.Models
             CreateOutput(ProcedureName, WriteFiles, WriteSP, CommandText);
         }
 
-        private void GenerateDeleteProcedure(string ProcedureName, DataSet FieldList, bool WriteFiles, bool WriteSP)
+        private void GenerateDeleteProcedure(string ProcedureName, DataSet FieldList, bool WriteFiles, bool WriteSP, string schemaName)
         {
             string tableName = FieldList.Tables[0].TableName;
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append(this.GetProcedureHeader(ProcedureName));
+            stringBuilder.Append(this.GetProcedureHeader(ProcedureName, schemaName));
             stringBuilder.Append("\n");
             List<DataColumn> primaryKeys = this.GetPrimaryKeys(FieldList);
             if (primaryKeys.Count == 0)
@@ -335,7 +345,7 @@ namespace Orwell.Models
             List<string> stringList = new List<string>();
             stringBuilder.Append(this.GetParameterListString(primaryKeys));
             stringBuilder.Append("\nAS\n");
-            stringBuilder.Append("DELETE FROM [" + tableName + "]\n");
+            stringBuilder.Append("DELETE FROM  [" + schemaName + "].[" + tableName + "]\n");
             stringBuilder.Append(this.GetWHEREClause(primaryKeys));
             stringBuilder.Append("\n/*" + this.GetDropProcedureCode(ProcedureName) + "*/");
             string CommandText = stringBuilder.ToString().Replace("\n", Environment.NewLine);
@@ -343,11 +353,11 @@ namespace Orwell.Models
             CreateOutput(ProcedureName, WriteFiles, WriteSP, CommandText);
         }
 
-        private void GenerateUpdateProcedure(string ProcedureName, DataSet FieldList, bool WriteFiles, bool WriteSP)
+        private void GenerateUpdateProcedure(string ProcedureName, DataSet FieldList, bool WriteFiles, bool WriteSP, string schemaName)
         {
             string tableName = FieldList.Tables[0].TableName;
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append(this.GetProcedureHeader(ProcedureName));
+            stringBuilder.Append(this.GetProcedureHeader(ProcedureName, schemaName));
             List<DataColumn> allColumns = this.GetAllColumns(FieldList);
             List<DataColumn> primaryKeys = this.GetPrimaryKeys(FieldList);
             List<DataColumn> updatableColumns = this.GetUpdatableColumns(FieldList);
@@ -355,7 +365,7 @@ namespace Orwell.Models
                 return;
             stringBuilder.Append(this.GetParameterListString(allColumns));
             stringBuilder.Append("\nAS\n");
-            stringBuilder.Append("UPDATE [" + tableName + "] \n");
+            stringBuilder.Append("UPDATE [" + schemaName + "].[" + tableName + "] \n");
             stringBuilder.Append("SET \n");
             for (int index = 0; index < updatableColumns.Count; ++index)
             {
@@ -372,11 +382,11 @@ namespace Orwell.Models
             CreateOutput(ProcedureName, WriteFiles, WriteSP, CommandText);
         }
 
-        private void GenerateInsertProcedure(string ProcedureName, DataSet FieldList, bool WriteFiles, bool WriteSP)
+        private void GenerateInsertProcedure(string ProcedureName, DataSet FieldList, bool WriteFiles, bool WriteSP, string schemaName)
         {
             string tableName = FieldList.Tables[0].TableName;
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append(this.GetProcedureHeader(ProcedureName));
+            stringBuilder.Append(this.GetProcedureHeader(ProcedureName, schemaName));
             List<DataColumn> allColumns = this.GetAllColumns(FieldList);
             List<DataColumn> primaryKeys = this.GetPrimaryKeys(FieldList);
             List<DataColumn> updatableColumns = this.GetUpdatableColumns(FieldList);
@@ -384,7 +394,7 @@ namespace Orwell.Models
                 return;
             stringBuilder.Append(this.GetParameterListString(updatableColumns, true, FieldList));
             stringBuilder.Append("\nAS\n");
-            stringBuilder.Append("INSERT INTO [" + tableName + "]\n( \n");
+            stringBuilder.Append("INSERT INTO [" + schemaName + "].[" + tableName + "]\n( \n");
             for (int index = 0; index < updatableColumns.Count; ++index)
             {
                 stringBuilder.Append("\t");
@@ -430,7 +440,149 @@ namespace Orwell.Models
             CreateOutput(ProcedureName, WriteFiles, WriteSP, CommandText);
         }
 
-        private void CreateOutput(string ProcedureName, bool WriteFiles, bool WriteSP, string CommandText, string outputType="")
+        #endregion
+
+        #region Views
+        private string GetViewHeader(string Title)
+        {
+            return "@{\n   ViewBag.Title = \"" + TitleCase(Title) + "\"; \n} \n\n <h1>" + TitleCase(Title) + "</h1>\n";
+        }
+
+        private string GetViewFooter()
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append("@section scripts {\n");
+            stringBuilder.Append(" <script type=\"text/javascript\">\n// add scripts here\n</script>\n");
+            stringBuilder.Append("}");
+            return stringBuilder.ToString();
+        }
+
+        private void GenerateSelectViews(string ProcedureName, DataSet FieldList, bool WriteFiles, bool WriteSP, string schemaName)
+        {
+            var viewGen = new ViewGenerator();
+            string tableName = FieldList.Tables[0].TableName;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append("@model "+AppName+".Core.Models."+tableName+"Collection\n\n");
+            stringBuilder.Append(this.GetViewHeader("Manage " + tableName));
+
+            stringBuilder.Append("\n");
+            stringBuilder.Append("<table class=\"table DataTable\">\n");
+            stringBuilder.Append("   <thead>\n");
+            List<DataColumn> selectableColumns = this.GetUpdatableColumns(FieldList);
+
+            // Build Table Header
+            for (int index = 0; index < selectableColumns.Count; ++index)
+            {
+                if (index == 0)
+                {
+                    stringBuilder.Append("     <tr>");
+                    stringBuilder.Append("\n      <th>");
+                }
+                DataColumn dataColumn = selectableColumns[index];
+                stringBuilder.Append(dataColumn.ColumnName.Replace("_", " ").Replace("-", " "));
+                if (index < selectableColumns.Count - 1)
+                    stringBuilder.Append("</th>\n      <th>");
+            }
+            stringBuilder.Append("</th>\n      <th>Functions</th>");
+            stringBuilder.Append("\n     </tr>\n   </thead>\n   <tbody>");
+            stringBuilder.Append("\n");
+            stringBuilder.Append("@{\n     foreach(var item in Model){");
+            stringBuilder.Append("\n          <tr>\n");
+
+            for (int index = 0; index < selectableColumns.Count; ++index)
+            {
+                DataColumn dataColumn = selectableColumns[index];
+                stringBuilder.Append("             <td>@Html.DisplayFor(modelItem => item." + dataColumn.ColumnName + ")</td>");
+                stringBuilder.Append("\n");
+            }
+            stringBuilder.Append("             <td>\n");
+            stringBuilder.Append("                @if(User.IsInRole(\"user.edit.example\"))\n");
+            stringBuilder.Append("                {\n");
+            stringBuilder.Append("                   <a href=\"@Url.Action(\"Edit\", new { id = item.Id })\" class=\"btn btn-xs btn-default\">Edit</a>\n");
+            stringBuilder.Append("                }\n");
+            stringBuilder.Append("                @if(User.IsInRole(\"user.delete.example\"))\n");
+            stringBuilder.Append("                {\n");
+            stringBuilder.Append("                   <a href=\"@Url.Action(\"Delete\", new { id = item.Id })\" class=\"btn btn-xs btn-danger\">Delete</a>\n");
+            stringBuilder.Append("                }\n");
+            stringBuilder.Append("             </td>");
+
+            stringBuilder.Append("\n");
+            stringBuilder.Append("          </tr>\n       } \n}");
+            stringBuilder.Append("\n    </tbody>");
+            stringBuilder.Append("\n</table>\n\n");
+
+            stringBuilder.Append(viewGen.AddDataTablesJS());
+
+            string CommandText = stringBuilder.ToString().Replace("\n", Environment.NewLine);
+
+            CreateOutput(tableName, WriteFiles, false, CommandText, "view", "Index.cshtml");
+        }
+
+        private void GenerateUpdateViews(string ProcedureName, DataSet FieldList, bool WriteFiles, bool WriteSP, string schemaName)
+        {
+            string tableName = FieldList.Tables[0].TableName;
+            var viewGen = new ViewGenerator();
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append("@model " + AppName + ".Core.Models.Update" + tableName + "ViewModel\n\n");
+            stringBuilder.Append(this.GetViewHeader("Update " + tableName));
+
+            stringBuilder.Append("\n");
+            stringBuilder.Append("   @using (Html.BeginForm(\"Edit" + tableName + "\", \"" + tableName + "\", FormMethod.Post, new { id = \"" + tableName + "Form\", @class = \"form form-horizontal\" }))\n");
+            stringBuilder.Append("   {\n");
+
+
+            List<DataColumn> selectableColumns = this.GetUpdatableColumns(FieldList);
+
+            for (int index = 0; index < selectableColumns.Count; ++index)
+            {
+                DataColumn dataColumn = selectableColumns[index];
+                stringBuilder.Append(viewGen.CreateFormElement(dataColumn, "horizontal", "bootstrap"));
+            }
+
+            stringBuilder.Append("        <input class=\"btn btn-success\" type=\"submit\" value=\"Update\" /> \n\n");
+            stringBuilder.Append("    }\n");
+
+            stringBuilder.Append(GetViewFooter());
+
+            string CommandText = stringBuilder.ToString().Replace("\n", Environment.NewLine);
+
+            CreateOutput(tableName, WriteFiles, false, CommandText, "view", "Update.cshtml");
+        }
+
+        private void GenerateInsertViews(string ProcedureName, DataSet FieldList, bool WriteFiles, bool WriteSP, string schemaName)
+        {
+            string tableName = FieldList.Tables[0].TableName;
+            var viewGen = new ViewGenerator();
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append("@model " + AppName + ".Core.Models.Insert" + tableName + "ViewModel\n\n");
+            stringBuilder.Append(this.GetViewHeader("Add "+tableName));
+
+            stringBuilder.Append("\n");
+            stringBuilder.Append("        @using (Html.BeginForm(\"Insert" + tableName + "\", \"" + tableName + "\", FormMethod.Post, new { id = \"" + tableName + "Form\", @class = \"form form-horizontal\" }))\n");
+            stringBuilder.Append("        {\n");
+
+
+            List<DataColumn> selectableColumns = this.GetUpdatableColumns(FieldList);
+
+            for (int index = 0; index < selectableColumns.Count; ++index)
+            {
+                DataColumn dataColumn = selectableColumns[index];
+                stringBuilder.Append(viewGen.CreateFormElement(dataColumn, "horizontal", "bootstrap"));
+            }
+
+            stringBuilder.Append("            <input class=\"btn btn-success\" type=\"submit\" value=\"Add " + tableName+"\" /> \n\n");
+            stringBuilder.Append("        }\n");
+
+            stringBuilder.Append(GetViewFooter());
+
+            string CommandText = stringBuilder.ToString().Replace("\n", Environment.NewLine);
+
+            CreateOutput(tableName, WriteFiles, false, CommandText, "view", "Insert.cshtml");
+        }
+        #endregion
+
+        #region Utilities
+        private void CreateOutput(string ProcedureName, bool WriteFiles, bool WriteSP, string CommandText, string outputType = "", string outputFile = "")
         {
             if (WriteSP)
             {
@@ -442,64 +594,88 @@ namespace Orwell.Models
 
             if (WriteFiles)
             {
-                if (outputType != "")
+                if (outputFile != "")
                 {
-                    SaveToFile(CommandText, ProcedureName, outputType);
+                    SaveToFile(CommandText, ProcedureName, outputType, outputFile);
                 }
                 else
                 {
-                    SaveToFile(CommandText, ProcedureName);
+                    SaveToFile(CommandText, ProcedureName, "sql");
                 }
             }
         }
 
-        private void SaveToFile(string CommandText, string ProcedureName, string outputType="")
+        private void SaveToFile(string CommandText, string ProcedureName, string outputType = "", string outputFile = "")
         {
-            string timestamp = DateTime.Now.ToString("yyyy-MM-dd");
-            string path = @"c:\Orwell-Generated-" + timestamp;
-            string viewDirectory = @"c:\Orwell-Generated-" + timestamp +"\\Views";
-            string viewPath = @"c:\Orwell-Generated-" + timestamp +"\\Views\\"+TitleCase(ProcedureName);
+            var fileName = SetupDirectoriesAndFilename(CommandText, ProcedureName, outputType, outputFile);
+            using (StreamWriter outfile = new StreamWriter(fileName))
+            {
+                outfile.Write(CommandText);
+            }
+        }
 
+        private string SetupDirectoriesAndFilename(string CommandText, string ProcedureName, string outputType, string outputFile)
+        {
+            string path = @"c:\Orwell-Generated-" + timestamp;
+            string viewDirectory = @"c:\Orwell-Generated-" + timestamp + "\\Views";
+            string viewSubDirectory = @"c:\Orwell-Generated-" + timestamp + "\\Views\\" + TitleCase(ProcedureName);
+            string modelDirectory = @"c:\Orwell-Generated-" + timestamp + "\\Models";
+            string sqlDirectory = @"c:\Orwell-Generated-" + timestamp + "\\Sql";
+            string coreDataDirectory = @"c:\Orwell-Generated-" + timestamp + "\\Data";
+            string fileName = string.Empty;
             try
             {
-                string fileName = path + "\\" + ProcedureName + ".sql";
-
+                // Main directory
                 if (!Directory.Exists(path))
                 {
                     DirectoryInfo di = Directory.CreateDirectory(path);
                 }
-                if (outputType != "")
+                switch (outputType)
                 {
-                    if (!Directory.Exists(viewDirectory))
-                    {
-                        DirectoryInfo di2 = Directory.CreateDirectory(viewDirectory);
-                    }
-                    if (!Directory.Exists(viewPath))
-                    {
-                        DirectoryInfo di3 = Directory.CreateDirectory(viewPath);
-                    }
-                    fileName = viewPath + "\\" + outputType;
+                    case "view":
+                        if (!Directory.Exists(viewDirectory))
+                        {
+                            DirectoryInfo di2 = Directory.CreateDirectory(viewDirectory);
+                        }
+                        if (!Directory.Exists(viewSubDirectory))
+                        {
+                            DirectoryInfo di3 = Directory.CreateDirectory(viewSubDirectory);
+                        }
+                        fileName = viewSubDirectory + "\\" + outputFile;
+                        break;
+                    case "model":
+                        if (!Directory.Exists(modelDirectory))
+                        {
+                            DirectoryInfo di4 = Directory.CreateDirectory(modelDirectory);
+                        }
+                        fileName = modelDirectory + "\\" + outputFile;
+                        break;
+                    case "data":
+                        if (!Directory.Exists(coreDataDirectory))
+                        {
+                            DirectoryInfo di4 = Directory.CreateDirectory(coreDataDirectory);
+                        }
+                        fileName = coreDataDirectory + "\\" + outputFile;
+                        break;
+                    case "sql":
+                    default:
+                        if (!Directory.Exists(sqlDirectory))
+                        {
+                            DirectoryInfo di4 = Directory.CreateDirectory(sqlDirectory);
+                        }
+                        fileName = sqlDirectory + "\\" + ProcedureName + ".sql";
+                        break;
                 }
-
-                using (StreamWriter outfile = new StreamWriter(fileName))
-                {
-                    outfile.Write(CommandText);
-                }
-
+                return fileName.ToString();
             }
             catch (Exception e)
             {
                 Console.WriteLine("The process failed: {0}", e.ToString());
             }
             finally { }
-
+            return null;
         }
-
-        private string GetProcedureHeader(string ProcedureName)
-        {
-            return "CREATE PROCEDURE " + ProcedureName;
-        }
-
+        
         private string TitleCase(string AnyString)
         {
             var anyString = AnyString.ToLower();
@@ -507,12 +683,7 @@ namespace Orwell.Models
             TextInfo textInfo = cultureInfo.TextInfo;
             return textInfo.ToTitleCase(anyString);
         }
-
-        private string GetViewHeader(string TableName)
-        {
-            return "@{\n   ViewBag.Title = \"" + TitleCase(TableName) + "\"; \n} \n\n <h1>"+TitleCase(TableName)+"</h1>\n";
-        }
-
+        
         private string GetDropProcedureCode(string ProcedureName)
         {
             return "DROP PROC " + ProcedureName;
@@ -735,8 +906,7 @@ namespace Orwell.Models
             }
             return stringBuilder.ToString();
         }
-
-        public delegate void ProcedureCreatedEventHandler(object sender, ProcedureCreatedEventArgs e);
+        #endregion
     }
 
 }
