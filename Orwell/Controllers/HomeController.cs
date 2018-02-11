@@ -109,6 +109,9 @@ namespace Orwell.Controllers
                 }
 
                 List<DatabaseTable> databaseTableList = new List<DatabaseTable>();
+                var genUp = new SpGenerator();
+                genUp.timestamp = DateTime.Now.ToString("yyyyMMddhhmmss");
+                genUp.AppName = vm.AppName;
                 foreach (string checkedItem in formatedList)
                 {
                     databaseTableList.Add(new DatabaseTable()
@@ -124,19 +127,15 @@ namespace Orwell.Controllers
                         WriteFiles = writeFiles,
                         WriteProcedures = writeSP
                     });
-
-                    var genUp = new SpGenerator();
-
-                    genUp.GenerateStoreProcedures(conxString, databaseTableList);
                 }
-
+                genUp.GenerateStoreProcedures(conxString, databaseTableList);
             }
             catch (Exception ex)
             {
-                return View(ex.Message);
+                return View("Generate", ex.Message);
             }
 
-            return View();
+            return View("Generate");
         }
     }
 }
