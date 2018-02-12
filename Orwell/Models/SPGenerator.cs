@@ -198,7 +198,7 @@ namespace Orwell.Models
 
             foreach (var item in commandList)
             {
-                stringBuilder.Append("public const string " + item.Title + " = \"" + item.Value + " \";\n");
+                stringBuilder.Append("public const string " + item.Title + " = \"" + item.Value + "\";\n");
             }
 
             stringBuilder.Append("\n");
@@ -249,11 +249,10 @@ namespace Orwell.Models
         {
             StringBuilder stringBuilder = new StringBuilder();
 
+            stringBuilder.Append("//using Karpster.Core.Data.EntityFramework;\n");
             stringBuilder.Append("//using System;\n");
             stringBuilder.Append("//using System.Collections.Generic;\n");
             stringBuilder.Append("//using System.ComponentModel.DataAnnotations;\n");
-            stringBuilder.Append("//using System.Linq;\n\n");
-            stringBuilder.Append("using Karpster.Core.Data.ObjectModel;\n");
 
             stringBuilder.Append("namespace " + AppName + ".Core.Models \n{ \n");
 
@@ -445,7 +444,15 @@ namespace Orwell.Models
         #region Views
         private string GetViewHeader(string Title)
         {
-            return "@{\n   ViewBag.Title = \"" + TitleCase(Title) + "\"; \n} \n\n <h1>" + TitleCase(Title) + "</h1>\n";
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append("@{\n   ViewBag.Title = \"" + TitleCase(Title.Replace("_"," ")) + "\"; \n} \n\n");
+            stringBuilder.Append("<div class=\"row\">\n");
+            stringBuilder.Append("   <div class=\"col-lg-12\">\n");
+            stringBuilder.Append("      <div class=\"hpanel\">\n");
+            stringBuilder.Append("         <div class=\"panel-body\">\n");
+            stringBuilder.Append("            <h1>" + TitleCase(Title.Replace("_", " ")) + "</h1>\n");
+
+            return stringBuilder.ToString();
         }
 
         private string GetViewFooter()
@@ -462,11 +469,12 @@ namespace Orwell.Models
             var viewGen = new ViewGenerator();
             string tableName = FieldList.Tables[0].TableName;
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append("@model "+AppName+".Core.Models."+tableName+"Collection\n\n");
+            stringBuilder.Append("@model List<"+AppName+".Core.Models."+ tableName.Replace("_", "") + ">\n\n");
+
             stringBuilder.Append(this.GetViewHeader("Manage " + tableName));
 
             stringBuilder.Append("\n");
-            stringBuilder.Append("<table class=\"table DataTable\">\n");
+            stringBuilder.Append("<table class=\"table table-striped table-bordered DataTable\">\n");
             stringBuilder.Append("   <thead>\n");
             List<DataColumn> selectableColumns = this.GetUpdatableColumns(FieldList);
 
@@ -510,6 +518,11 @@ namespace Orwell.Models
             stringBuilder.Append("          </tr>\n       } \n}");
             stringBuilder.Append("\n    </tbody>");
             stringBuilder.Append("\n</table>\n\n");
+            stringBuilder.Append("<a href = \"@Url.Action(\"Insert\",\""+ tableName.Replace("_", "") + "\")\" class=\"btn btn-primary pull-right\">Add " + tableName.Replace("_", " ") + "</a>");
+            stringBuilder.Append("</div>\n");
+            stringBuilder.Append("</div>\n");
+            stringBuilder.Append("</div>\n");
+            stringBuilder.Append("</div>\n\n");
 
             stringBuilder.Append(viewGen.AddDataTablesJS());
 

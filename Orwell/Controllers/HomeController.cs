@@ -122,7 +122,7 @@ namespace Orwell.Controllers
                         DeleteProcedure = true,
                         UpdateProcedure = true,
                         InsertProcedure = true,
-                        SelectProcedure = false,
+                        SelectProcedure = true,
                         SelectDetailsProcedure = true,
                         WriteFiles = writeFiles,
                         WriteProcedures = writeSP

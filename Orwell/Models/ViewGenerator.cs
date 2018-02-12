@@ -15,13 +15,19 @@ namespace Orwell.Models
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append("@section scripts {\n");
             stringBuilder.Append("   <link href = \"//cdn.datatables.net/1.10.11/css/jquery.dataTables.min.css\" rel=\"stylesheet\">\n");
+            stringBuilder.Append("   <link href=\"//cdn.datatables.net/1.10.11/css/dataTables.bootstrap.min.css\" rel=\"stylesheet\">\n");
             stringBuilder.Append("   <script src = \"//cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js\"></script>\n");
             stringBuilder.Append("   <script>\n");
             stringBuilder.Append("      $(document).ready(function() {\n");
-            stringBuilder.Append("         $('.DataTable').DataTable();\n");
-            stringBuilder.Append("      });\n");
+            stringBuilder.Append("        $('.DataTable').DataTable(\n");
+            stringBuilder.Append("        {\n");
+            stringBuilder.Append("            \"pagingType\": \"full_numbers\",\n");
+            stringBuilder.Append("            \"lengthMenu\": [[25, 50, 100, -1], [25, 50, 100, \"All\"]]\n");
+            stringBuilder.Append("        }\n");
+            stringBuilder.Append("      );\n");
+            stringBuilder.Append("    });\n");
             stringBuilder.Append("   </script>\n");
-            stringBuilder.Append("}");
+            stringBuilder.Append("}\n");
             return stringBuilder.ToString();
         }
 
