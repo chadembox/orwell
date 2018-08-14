@@ -155,6 +155,7 @@
     <Compile Include="Models\DatabaseTable.cs" />
     <Compile Include="Models\ProcedureCreatedArgs.cs" />
     <Compile Include="Models\SPGenerator.cs" />
+    <Compile Include="Models\SqlTableCreator.cs" />
     <Compile Include="Models\ViewGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\PopulateTablesViewModel.cs" />

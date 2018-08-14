@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using System.Globalization;
 using System.Threading;
+using System.Data.SqlClient;
 
 namespace Orwell.Models
 {
@@ -40,10 +41,10 @@ namespace Orwell.Models
         {
             OverwriteExistingSps = false;
             foreach (DatabaseTable databaseTable in DatabaseTables)
-                this.GenerateStoreProcedures(ConnectionString, databaseTable, databaseTable.InsertProcedure, databaseTable.SelectProcedure, databaseTable.UpdateProcedure, databaseTable.DeleteProcedure, databaseTable.SelectDetailsProcedure, databaseTable.WriteFiles, databaseTable.WriteProcedures);
+                this.GenerateStoreProcedures(ConnectionString, databaseTable, databaseTable.InsertProcedure, databaseTable.SelectProcedure, databaseTable.UpdateProcedure, databaseTable.DeleteProcedure, databaseTable.SelectDetailsProcedure, databaseTable.CreateTables, databaseTable.WriteFiles, databaseTable.WriteProcedures);
         }
 
-        public void GenerateStoreProcedures(string ConnectionString, DatabaseTable Table, bool CreateInsert, bool CreateSelect, bool CreateUpdate, bool CreateDelete, bool CreateSelectDetails, bool WriteFiles, bool WriteSP)
+        public void GenerateStoreProcedures(string ConnectionString, DatabaseTable Table, bool CreateInsert, bool CreateSelect, bool CreateUpdate, bool CreateDelete, bool CreateSelectDetails, bool CreateTable, bool WriteFiles, bool WriteSP)
         {
             var cleanTableName = string.Empty;
             var commandPrefix = string.Empty;
@@ -88,6 +89,16 @@ namespace Orwell.Models
                     commandList.Add(new CommandObj() { Title = "UpdateCommand", Value = tempName });
 
                     this.GenerateUpdateViews(tempName, tableSchema, true, false, Table.SchemaName);
+                }
+                if (CreateTable)
+                {
+                    var createTable = new SqlTableCreator();
+                    var conx = new SqlConnection();
+                    conx.ConnectionString = ConnectionString;
+                    createTable.Connection = conx;
+
+                    var tabl = createTable.CreateFromDataTable(tableSchema.Tables[0]);
+                    SaveToFile(tabl, tableSchema.Tables[0].TableName, "table", tabl);     
                 }
                 if (!CreateInsert)
                     return;
@@ -424,14 +435,14 @@ namespace Orwell.Models
                     string putParameterName = this.GetOutPutParameterName(primaryKeys);
                     if (putParameterName.Trim() != "")
                     {
-                        stringBuilder.Append("SET " + putParameterName + "= @@IDENTITY");
-                        stringBuilder.Append("\n Return " + putParameterName);
+//                        stringBuilder.Append("SET " + putParameterName + "= @@IDENTITY");
+//                        stringBuilder.Append("\n Return " + putParameterName);
                     }
                     else
-                        stringBuilder.Append("SELECT @@IDENTITY");
+                        stringBuilder.Append("SELECT SCOPE_IDENTITY()");
                 }
                 else
-                    stringBuilder.Append("SELECT @@IDENTITY");
+                    stringBuilder.Append("SELECT SCOPE_IDENTITY()");
             }
             stringBuilder.Append("\n/*" + this.GetDropProcedureCode(ProcedureName) + "*/");
             string CommandText = stringBuilder.ToString().Replace("\n", Environment.NewLine);
@@ -635,6 +646,7 @@ namespace Orwell.Models
             string modelDirectory = @"c:\Orwell-Generated-" + timestamp + "\\Models";
             string sqlDirectory = @"c:\Orwell-Generated-" + timestamp + "\\Sql";
             string coreDataDirectory = @"c:\Orwell-Generated-" + timestamp + "\\Data";
+            string coreTableDirectory = @"c:\Orwell-Generated-" + timestamp + "\\Tables";
             string fileName = string.Empty;
             try
             {
@@ -669,6 +681,13 @@ namespace Orwell.Models
                             DirectoryInfo di4 = Directory.CreateDirectory(coreDataDirectory);
                         }
                         fileName = coreDataDirectory + "\\" + outputFile;
+                        break;
+                    case "table":
+                        if (!Directory.Exists(coreTableDirectory))
+                        {
+                            DirectoryInfo di5 = Directory.CreateDirectory(coreTableDirectory);
+                        }
+                        fileName = coreTableDirectory + "\\" + ProcedureName + ".sql";
                         break;
                     case "sql":
                     default:
@@ -920,6 +939,28 @@ namespace Orwell.Models
             return stringBuilder.ToString();
         }
         #endregion
+
+        //public static void BulkInsertDataTable(string connectionString, string tableName, DataTable table)
+        //{
+        //    using (SqlConnection connection = new SqlConnection(connectionString))
+        //    {
+        //        SqlBulkCopy bulkCopy =
+        //            new SqlBulkCopy
+        //            (
+        //            connection,
+        //            SqlBulkCopyOptions.TableLock |
+        //            SqlBulkCopyOptions.FireTriggers |
+        //            SqlBulkCopyOptions.UseInternalTransaction,
+        //            null
+        //            );
+
+        //        bulkCopy.DestinationTableName = tableName;
+        //        connection.Open();
+
+        //        bulkCopy.WriteToServer(table);
+        //        connection.Close();
+        //    }
+        //}
     }
 
 }

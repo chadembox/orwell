@@ -15,6 +15,7 @@ namespace Orwell.Models
         public bool UpdateProcedure;
         public bool WriteProcedures;
         public bool WriteFiles;
+        public bool CreateTables;
 
         public DatabaseTable()
         {

@@ -124,6 +124,7 @@ namespace Orwell.Controllers
                         InsertProcedure = true,
                         SelectProcedure = true,
                         SelectDetailsProcedure = true,
+                        CreateTables = true,
                         WriteFiles = writeFiles,
                         WriteProcedures = writeSP
                     });
