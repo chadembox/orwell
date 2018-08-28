@@ -39,6 +39,9 @@ namespace Orwell.ViewModels
         {
             Tables = null;
             TableIds = new List<string>();
+            AppName = "Shanahan";
+            ServerName = "HPz620-PC\\Chademlocal";
+            DatabaseName = "ShanahanDB-082618";
         }
     }
 }

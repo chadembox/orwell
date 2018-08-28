@@ -96,6 +96,8 @@ namespace Orwell.Models
                 {
                     sql += "\t[" + column["ColumnName"].ToString() + "] " + SQLGetType(column);
 
+                    /// TODO : Add IDENTITY CODE HERE --  IDENTITY(1,1) when appropriate
+
                     if (schema.Columns.Contains("AllowDBNull") && (bool)column["AllowDBNull"] == false)
                         sql += " NOT NULL";
 

@@ -277,5 +277,5 @@ X:\Projects\orwell\Orwell\bin\System.Web.WebPages.Razor.xml
 X:\Projects\orwell\Orwell\obj\Debug\Orwell.csproj.CoreCompileInputs.cache
 X:\Projects\orwell\Orwell\obj\Debug\Orwell.dll
 X:\Projects\orwell\Orwell\obj\Debug\Orwell.pdb
-X:\Projects\orwell\Orwell\obj\Debug\Orwell.csprojResolveAssemblyReference.cache
 X:\Projects\orwell\Orwell\obj\Debug\Orwell.csproj.CopyComplete
+X:\Projects\orwell\Orwell\obj\Debug\Orwell.csprojAssemblyReference.cache

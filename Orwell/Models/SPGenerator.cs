@@ -41,10 +41,10 @@ namespace Orwell.Models
         {
             OverwriteExistingSps = false;
             foreach (DatabaseTable databaseTable in DatabaseTables)
-                this.GenerateStoreProcedures(ConnectionString, databaseTable, databaseTable.InsertProcedure, databaseTable.SelectProcedure, databaseTable.UpdateProcedure, databaseTable.DeleteProcedure, databaseTable.SelectDetailsProcedure, databaseTable.CreateTables, databaseTable.WriteFiles, databaseTable.WriteProcedures);
+                this.GenerateStoreProcedures(ConnectionString, databaseTable, databaseTable.InsertProcedure, databaseTable.SelectProcedure, databaseTable.UpdateProcedure, databaseTable.DeleteProcedure, databaseTable.SelectDetailsProcedure, databaseTable.CreateTables, databaseTable.WriteFiles, databaseTable.WriteProcedures, true);
         }
 
-        public void GenerateStoreProcedures(string ConnectionString, DatabaseTable Table, bool CreateInsert, bool CreateSelect, bool CreateUpdate, bool CreateDelete, bool CreateSelectDetails, bool CreateTable, bool WriteFiles, bool WriteSP)
+        public void GenerateStoreProcedures(string ConnectionString, DatabaseTable Table, bool CreateInsert, bool CreateSelect, bool CreateUpdate, bool CreateDelete, bool CreateSelectDetails, bool CreateTable, bool WriteFiles, bool WriteSP, bool CreateController)
         {
             var cleanTableName = string.Empty;
             var commandPrefix = string.Empty;
@@ -117,6 +117,8 @@ namespace Orwell.Models
 
                 // Model Creation script
                 GenerateModel(cleanTableName, commandList, tableSchema, "int", Table.SchemaName);
+
+                GenerateController(cleanTableName, true);
             }
             catch (Exception ex)
             {
@@ -287,7 +289,7 @@ namespace Orwell.Models
             stringBuilder.Append("\n");
             stringBuilder.Append("SELECT");
             stringBuilder.Append("\n");
-            List<DataColumn> selectableColumns = this.GetUpdatableColumns(FieldList);
+            List<DataColumn> selectableColumns = this.GetAllColumns(FieldList);
 
             for (int index = 0; index < selectableColumns.Count; ++index)
             {
@@ -323,7 +325,7 @@ namespace Orwell.Models
             stringBuilder.Append("SELECT");
             stringBuilder.Append("\n");
 
-            List<DataColumn> selectableColumns = this.GetUpdatableColumns(FieldList);
+            List<DataColumn> selectableColumns = this.GetAllColumns(FieldList);
 
             for (int index = 0; index < selectableColumns.Count; ++index)
             {
@@ -441,13 +443,77 @@ namespace Orwell.Models
                     else
                         stringBuilder.Append("SELECT SCOPE_IDENTITY()");
                 }
-                else
-                    stringBuilder.Append("SELECT SCOPE_IDENTITY()");
+//                else
+//                    stringBuilder.Append("SELECT SCOPE_IDENTITY()\n RETURN 0");
             }
+            stringBuilder.Append("SELECT SCOPE_IDENTITY()\n RETURN 0");
             stringBuilder.Append("\n/*" + this.GetDropProcedureCode(ProcedureName) + "*/");
             string CommandText = stringBuilder.ToString().Replace("\n", Environment.NewLine);
 
             CreateOutput(ProcedureName, WriteFiles, WriteSP, CommandText);
+        }
+
+        private void GenerateController(string ProcedureName, bool WriteFiles)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append("using "+AppName+".Core.Models;\n");
+            stringBuilder.Append("using " + AppName + ".Web.ViewModels;\n");
+            stringBuilder.Append("using System;\n");
+            stringBuilder.Append("using System.Collections.Generic;\n");
+            stringBuilder.Append("using System.Linq;\n");
+            stringBuilder.Append("using System.Web;\n");
+            stringBuilder.Append("using System.Web.Mvc;\n");
+            stringBuilder.Append("\n");
+            stringBuilder.Append("\n");
+            stringBuilder.Append("namespace " + AppName + ".Web.Controllers\n");
+            stringBuilder.Append("{\n");
+            stringBuilder.Append("\n");
+            stringBuilder.Append("  public class "+ProcedureName+"Controller : Controller\n");
+            stringBuilder.Append("  {\n");
+            stringBuilder.Append("      public ActionResult Index()\n");
+            stringBuilder.Append("      {\n");
+            stringBuilder.Append("          return View();\n");
+            stringBuilder.Append("      }\n\n");
+            stringBuilder.Append("      public ActionResult Add()\n");
+            stringBuilder.Append("      {\n");
+            stringBuilder.Append("          return View();\n");
+            stringBuilder.Append("      }\n\n");
+            stringBuilder.Append("      [HttpPost]\n");
+            stringBuilder.Append("      public ActionResult Add(" + ProcedureName + " model)\n");
+            stringBuilder.Append("      {\n");
+            stringBuilder.Append("          try\n");
+            stringBuilder.Append("          {\n");
+            stringBuilder.Append("              model.Save();\n");
+            stringBuilder.Append("          }\n");
+            stringBuilder.Append("          catch(Exception ex)\n");
+            stringBuilder.Append("          {\n");
+            stringBuilder.Append("              throw ex;\n");
+            stringBuilder.Append("          }\n");
+            stringBuilder.Append("          return View(model);\n");
+            stringBuilder.Append("      }\n\n");
+            stringBuilder.Append("      public ActionResult Update()\n");
+            stringBuilder.Append("      {\n");
+            stringBuilder.Append("          return View();\n");
+            stringBuilder.Append("      }\n\n");
+            stringBuilder.Append("      [HttpPost]\n");
+            stringBuilder.Append("      public ActionResult Update(" + ProcedureName + " model)\n");
+            stringBuilder.Append("      {\n");
+            stringBuilder.Append("          try\n");
+            stringBuilder.Append("          {\n");
+            stringBuilder.Append("              model.Save();\n");
+            stringBuilder.Append("          }\n");
+            stringBuilder.Append("          catch(Exception ex)\n");
+            stringBuilder.Append("          {\n");
+            stringBuilder.Append("              throw ex;\n");
+            stringBuilder.Append("          }\n");
+            stringBuilder.Append("          return View(model);\n");
+            stringBuilder.Append("      }\n\n");
+            stringBuilder.Append("  }\n");
+            stringBuilder.Append("}\n");
+
+            string CommandText = stringBuilder.ToString().Replace("\n", Environment.NewLine);
+
+            CreateOutput(ProcedureName, WriteFiles, false, CommandText, "controller");
         }
 
         #endregion
@@ -622,6 +688,10 @@ namespace Orwell.Models
                 {
                     SaveToFile(CommandText, ProcedureName, outputType, outputFile);
                 }
+                else if (outputFile != "controller")
+                {
+                    SaveToFile(CommandText, ProcedureName, outputType, outputFile);
+                }
                 else
                 {
                     SaveToFile(CommandText, ProcedureName, "sql");
@@ -647,6 +717,7 @@ namespace Orwell.Models
             string sqlDirectory = @"c:\Orwell-Generated-" + timestamp + "\\Sql";
             string coreDataDirectory = @"c:\Orwell-Generated-" + timestamp + "\\Data";
             string coreTableDirectory = @"c:\Orwell-Generated-" + timestamp + "\\Tables";
+            string controllerTableDirectory = @"c:\Orwell-Generated-" + timestamp + "\\Controllers";
             string fileName = string.Empty;
             try
             {
@@ -688,6 +759,13 @@ namespace Orwell.Models
                             DirectoryInfo di5 = Directory.CreateDirectory(coreTableDirectory);
                         }
                         fileName = coreTableDirectory + "\\" + ProcedureName + ".sql";
+                        break;
+                    case "controller":
+                        if (!Directory.Exists(controllerTableDirectory))
+                        {
+                            DirectoryInfo di5 = Directory.CreateDirectory(controllerTableDirectory);
+                        }
+                        fileName = controllerTableDirectory + "\\" + ProcedureName + "Controller.cs";
                         break;
                     case "sql":
                     default:
@@ -743,12 +821,12 @@ namespace Orwell.Models
             return dataColumnList;
         }
 
-        private List<DataColumn> GetUpdatableColumns(DataSet FieldList)
+        private List<DataColumn> GetUpdatableColumns(DataSet FieldList, bool select = false)
         {
             List<DataColumn> dataColumnList = new List<DataColumn>();
             foreach (DataColumn column in (InternalDataCollectionBase)FieldList.Tables[0].Columns)
             {
-                if (!column.AutoIncrement)
+                if ((!column.AutoIncrement && select == false) || select == true)
                     dataColumnList.Add(column);
             }
             return dataColumnList;
